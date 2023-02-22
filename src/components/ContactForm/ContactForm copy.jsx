@@ -1,11 +1,12 @@
+import PropTypes from 'prop-types';
 import { Formik, Field, Form } from 'formik';
 import styled from 'styled-components';
-import { FormWrapper, Button } from './ContactForm.styled'
 
+import {FormWrapper, Button} from './ContactForm.styled'
 import { useState } from 'react';
 
 import { useDispatch } from "react-redux";
-import {addContact} from 'redux/contactsSlice.jsx'
+
 
 const Input = styled(Field)`
     width: 250px;
@@ -18,13 +19,12 @@ const FormWithStyle = styled(Form)`
     justify-content: space-between;
     `;
 
-export const ContactForm = () => {
+export const ContactForm = ({ onSubmit }) => {
+    const dispatch = useDispatch();
 
     const [name, setName] = useState('');
     const [number, setNumber] = useState('');
-
-    const dispatch = useDispatch();
-
+    
     const handleInputChange = evt => {
         console.log(evt.currentTarget.name);
         switch (evt.currentTarget.name) {
@@ -41,8 +41,7 @@ export const ContactForm = () => {
 
     const handleSubmit = evt => {
         // evt.preventDefault();
-        dispatch(addContact(name, number));
-        console.log(name, number);
+        onSubmit({name, number});
         resetForm();
     }
 
@@ -85,3 +84,6 @@ export const ContactForm = () => {
     )
 }
 
+    ContactForm.propTypes = {
+    onSubmit: PropTypes.func.isRequired,
+}

@@ -1,28 +1,35 @@
-import PropTypes from 'prop-types';
-import {List, ListItem, Button} from './ContactList.styled'
+import { List, ListItem, Button } from './ContactList.styled'
+import { useSelector, useDispatch } from "react-redux";
+import {deleteContact} from "redux/contactsSlice.jsx"
 
-export const ContactList = ({listItems, onDelete}) => {
+export const ContactList = () => {
+    const contacts = useSelector(state => state.contacts);
+    const filter = useSelector(state => state.filter);
+
+    const dispatch = useDispatch();
+    
+    const handleDelete = (id) => dispatch(deleteContact(id));
+
+    const getVisibleContasts = () => {
+        const normalisedFilter = filter.toLowerCase();
+        const visebleContacts = contacts.filter(contact =>
+            contact.name.toLowerCase().includes(normalisedFilter));
+        return visebleContacts;
+    }
+    
+    const listItems = getVisibleContasts();
+
     return (
         <>
-            <List>
-                {listItems.length > 0 && (listItems.map((listItem) => (
+        <List>
+          {listItems.length > 0 && (listItems.map((listItem) => (
                     <ListItem key={listItem.id}><span>{listItem.name}: {listItem.number}</span>
-                        <Button type='button' onClick={() => onDelete(listItem.id)}>Delete</Button>
+                        <Button type='button' onClick={() => handleDelete(listItem.id)}>Delete</Button>
                     </ListItem>
             )))}
                 </List>
         </>
-        
     )
 }
 
-ContactList.propTypes = {
-    listItems: PropTypes.arrayOf(
-    PropTypes.exact({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-    ),
-    onDelete: PropTypes.func,
-}
+
